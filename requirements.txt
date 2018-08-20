@@ -1,0 +1,6 @@
+pycapnp
+protobuf
+flatbuffers
+msgpack-python
+argparse
+texttable
