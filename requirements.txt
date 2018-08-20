@@ -4,3 +4,4 @@ flatbuffers
 msgpack-python
 argparse
 texttable
+memory_profiler
