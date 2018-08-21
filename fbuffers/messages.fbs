@@ -1,0 +1,65 @@
+namespace BeaconChain.Messages;
+
+table ByteArray {
+    bytes:[byte];
+}
+
+table AttestationRecord {
+    slot:ulong = 0;
+    shard_id:uint16=0;
+    oblique_parent_hashes:[ByteArray];
+    shard_block_hash:[byte];
+    attester_bitfield:[byte];
+    aggregate_sig:[ByteArray];
+}
+
+table Block {
+    parent_hash:[byte];
+    slot_number:uint64= 0;
+    randao_reveal:[byte];
+    pow_chain_ref:[byte];
+    active_state_hash:[byte];
+    crystallized_state_root:[byte];
+    attestations:[AttestationRecord];
+}
+
+
+table ShardAndCommittee {
+    shard_id:short = 0;
+    committee:[uint32];
+}
+
+table CrosslinkRecord {
+    shard_id:uint16 = 0;
+    hash:[byte];
+}
+
+table ValidatorRecord {
+    pubkey:[byte];
+    withdrawal_shard:uint16 = 0;
+    withdrawal_address:[byte];
+    randao_commitment:[byte];
+    balance:uint64 = 0;
+    start_dynasty:uint64 = 0;
+    end_dynasty:uint64 =0;
+}
+
+table ShardAndCommitteeArray {
+    shard_and_commitee:[ShardAndCommittee];
+}
+
+table CrystallizedState {
+    last_state_recalc:uint64 = 0;
+    justified_streak:uint64 = 0;
+    last_finalized_slot:uint64 = 0;
+    current_dynasty:uint64 = 0;
+    crosslinking_start_shard:uint16 = 0;
+    total_deposits:[byte];
+    dynasty_seed:[byte];
+    dynasty_seed_last_reset:uint64 = 0;
+    crosslink_records:[CrosslinkRecord];
+    validators:[ValidatorRecord];
+    incides_for_slots: [ShardAndCommitteeArray];
+}
+
+
