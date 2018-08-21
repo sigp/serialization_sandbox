@@ -1,7 +1,8 @@
 import capnp
 import argparse
 import texttable
-import sys,os
+import sys
+import os
 
 sys.path.append(os.path.join(os.path.dirname(sys.path[0]), 'helpers'))
 import helpers
@@ -18,13 +19,12 @@ def explain_default_size(pack=True):
     Define whether values should be packed
     """
 
-    attestation_record= messages_capnp.AttestationRecord.new_message()
+    attestation_record = messages_capnp.AttestationRecord.new_message()
     block = messages_capnp.Block.new_message()
     crosslink_record = messages_capnp.CrosslinkRecord.new_message()
     shard_and_committee = messages_capnp.ShardAndCommittee.new_message()
     validator_record = messages_capnp.ValidatorRecord.new_message()
     crystallized_state = messages_capnp.CrystallizedState.new_message()
-
 
     if(pack):
         attestation_record_bytes = attestation_record.to_bytes_packed()
@@ -32,14 +32,14 @@ def explain_default_size(pack=True):
         shard_and_committee_bytes = shard_and_committee.to_bytes_packed()
         crosslink_record_bytes = crosslink_record.to_bytes_packed()
         validator_record_bytes = validator_record.to_bytes_packed()
-        crystallized_state_bytes =  crystallized_state.to_bytes_packed()
+        crystallized_state_bytes = crystallized_state.to_bytes_packed()
     else:
         attestation_record_bytes = attestation_record.to_bytes()
         block_bytes = block.to_bytes()
         shard_and_committee_bytes = shard_and_committee.to_bytes()
         crosslink_record_bytes = crosslink_record.to_bytes()
         validator_record_bytes = validator_record.to_bytes()
-        crystallized_state_bytes =  crystallized_state.to_bytes()
+        crystallized_state_bytes = crystallized_state.to_bytes()
 
     if (verbose):
         print('{} | {}'.format(len(attestation_record_bytes), attestation_record_bytes))
@@ -57,6 +57,7 @@ def explain_default_size(pack=True):
         'validatorRecord': len(validator_record_bytes),
         'crystallizedState': len(crystallized_state_bytes),
     }
+
 
 def explain_maxval_size(pack=True):
     """
@@ -108,8 +109,6 @@ def explain_maxval_size(pack=True):
     crosslink_record.dynasty = helpers.MAX_U64
     crosslink_record.hash = helpers.MAX_BYTES
 
-
-
     # ValidatorRecord
     validator_record = messages_capnp.ValidatorRecord.new_message()
 
@@ -153,21 +152,20 @@ def explain_maxval_size(pack=True):
     crystallized_state.dynastySeed = helpers.MAX_BYTES
     crystallized_state.dynastySeedLastReset = helpers.MAX_U64
 
-
     if(pack):
         attestation_record_bytes = attestation_record.to_bytes_packed()
         block_bytes = block.to_bytes_packed()
         shard_and_committee_bytes = shard_and_committee.to_bytes_packed()
         crosslink_record_bytes = crosslink_record.to_bytes_packed()
         validator_record_bytes = validator_record.to_bytes_packed()
-        crystallized_state_bytes =  crystallized_state.to_bytes_packed()
+        crystallized_state_bytes = crystallized_state.to_bytes_packed()
     else:
         attestation_record_bytes = attestation_record.to_bytes()
         block_bytes = block.to_bytes()
         shard_and_committee_bytes = shard_and_committee.to_bytes()
         crosslink_record_bytes = crosslink_record.to_bytes()
         validator_record_bytes = validator_record.to_bytes()
-        crystallized_state_bytes =  crystallized_state.to_bytes()
+        crystallized_state_bytes = crystallized_state.to_bytes()
 
     if (verbose):
         print('{} | {}'.format(len(attestation_record_bytes), attestation_record_bytes))
@@ -187,16 +185,13 @@ def explain_maxval_size(pack=True):
     }
 
 
-
 if (__name__ == '__main__'):
-
     # Parse the arguments to check verbosity
     parser = argparse.ArgumentParser(description='Testing Cap\'n Proto')
     parser.add_argument('-v', '--verbose', dest='verbose', action='store_true',
-            help='Verbose (Show all prints)')
+                        help='Verbose (Show all prints)')
     args = parser.parse_args()
     verbose = args.verbose
-
 
     # Run the experiments
     results = []
@@ -205,8 +200,8 @@ if (__name__ == '__main__'):
     results.append(explain_maxval_size(False))
     results.append(explain_maxval_size(True))
 
-    objects = [ 'attestationRecord', 'block', 'shardAndCommittee',
-            'crosslinkRecord', 'validatorRecord', 'crystallizedState' ]
+    objects = ['attestationRecord', 'block', 'shardAndCommittee',
+               'crosslinkRecord', 'validatorRecord', 'crystallizedState']
 
     table = texttable.Texttable()
     table.header(['Object', 'Default (Unpacked)', 'Default (Packed)', 'Maxsize (Unpacked)', 'Maxsize (Packed)'])
@@ -220,7 +215,3 @@ if (__name__ == '__main__'):
     output = table.draw()
 
     print(output)
-
-
-
-
