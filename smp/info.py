@@ -64,6 +64,7 @@ def explain_maxval_size():
     Show the size of the object when using maximum values
     """
 
+    # Attestation Record
     obl_hashes = []
     for i in range(0, 64):
         obl_hashes.append(b'\xff' * 32)
@@ -71,7 +72,6 @@ def explain_maxval_size():
     agg_sig = []
     for i in range(0, 64):
         agg_sig.append(2**256 - 1)
-    # Attestation Records
     attestation_record = AttestationRecord(
         slot=helpers.MAX_I64,
         shard_id=helpers.MAX_I16,
@@ -81,6 +81,7 @@ def explain_maxval_size():
         aggregate_sig=agg_sig
     )
 
+    # Blocks
     attestations = []
     for i in range(0, 2000):
         attestations.append(attestation_record)
@@ -95,11 +96,13 @@ def explain_maxval_size():
         crystallized_state_root=helpers.MAX_BYTES,
     )
 
+    # Crosslink Record
     crosslink_record = CrosslinkRecord(
         hash=helpers.MAX_BYTES,
         dynasty=helpers.MAX_I64,
     )
 
+    # Validator Record
     validator_record = ValidatorRecord(
         pubkey=(2**256 - 1),
         withdrawal_shard=helpers.MAX_I16,
@@ -110,6 +113,7 @@ def explain_maxval_size():
         end_dynasty=helpers.MAX_I64,
     )
 
+    # Shard and Committee
     committees = []
     for i in range(0, 1000):
         committees.append(helpers.MAX_I16)
@@ -119,7 +123,7 @@ def explain_maxval_size():
         committee=committees,
     )
 
-    # Setting up for Crystallized State
+    # Crystallized State
     validatorlist = []
     for i in range(0, 10000):
         validatorlist.append(validator_record)

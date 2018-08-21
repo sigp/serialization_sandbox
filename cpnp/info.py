@@ -64,60 +64,53 @@ def explain_maxval_size(pack=True):
     Show the size of the object when using maximum values
     Define whether packed or unpacked
     """
-    # Attestation
-    attestation_record = messages_capnp.AttestationRecord.new_message()
-
-    attestation_record.slot = helpers.MAX_U64
-    attestation_record.shardId = helpers.MAX_U16
-    attestation_record.shardBlockHash = helpers.MAX_BYTES
-    attestation_record.attesterBitfield = helpers.MAX_BYTES
-
+    # Attestation Records
     obl_hashes = []
     for i in range(0, 64):
-        obl_hashes.append(b'\xff' * 32)
-
-    attestation_record.obliqueParentHashes = obl_hashes
+        obl_hashes.append(helpers.MAX_BYTES)
 
     ag_sig = []
     for i in range(0, 64):
         ag_sig.append(helpers.MAX_BYTES)
 
+    attestation_record = messages_capnp.AttestationRecord.new_message()
+    attestation_record.slot = helpers.MAX_U64
+    attestation_record.shardId = helpers.MAX_U16
+    attestation_record.shardBlockHash = helpers.MAX_BYTES
+    attestation_record.attesterBitfield = helpers.MAX_BYTES
+    attestation_record.obliqueParentHashes = obl_hashes
     attestation_record.aggregateSig = ag_sig
 
     # Block
-    block = messages_capnp.Block.new_message()
-
-    block.parentHash = helpers.MAX_BYTES
-    block.slotNumber = helpers.MAX_U64
-    block.randaoReveal = helpers.MAX_BYTES
     attestRecords = []
-
     for i in range(0, 2000):
         attestRecords.append(attestation_record)
 
+    block = messages_capnp.Block.new_message()
+    block.parentHash = helpers.MAX_BYTES
+    block.slotNumber = helpers.MAX_U64
+    block.randaoReveal = helpers.MAX_BYTES
     block.attestations = attestRecords
     block.powChainRef = helpers.MAX_BYTES
     block.activateStateRoot: helpers.MAX_BYTES
     block.crystallizedStateRoot = helpers.MAX_BYTES
 
     # Shard and Committee
-    shard_and_committee = messages_capnp.ShardAndCommittee.new_message()
-
-    shard_and_committee.shardId = helpers.MAX_U16
     committees = []
     for i in range(0, 1000):
         committees.append(helpers.MAX_U32)
+
+    shard_and_committee = messages_capnp.ShardAndCommittee.new_message()
+    shard_and_committee.shardId = helpers.MAX_U16
     shard_and_committee.committee = committees
 
     # Crosslink Record
     crosslink_record = messages_capnp.CrosslinkRecord.new_message()
-
     crosslink_record.dynasty = helpers.MAX_U64
     crosslink_record.hash = helpers.MAX_BYTES
 
     # ValidatorRecord
     validator_record = messages_capnp.ValidatorRecord.new_message()
-
     validator_record.pubkey = helpers.MAX_BYTES
     validator_record.withdrawalShard = helpers.MAX_U16
     validator_record.withdrawalAddress = helpers.MAX_BYTES
@@ -128,14 +121,9 @@ def explain_maxval_size(pack=True):
 
     # CrystallizedState
 
-    crystallized_state = messages_capnp.CrystallizedState.new_message()
-
     validatorlist = []
     for i in range(0, 10000):
         validatorlist.append(validator_record)
-
-    crystallized_state.validators = validatorlist
-    crystallized_state.lastStateRecalc = helpers.MAX_U64
 
     indices_heights = []
     for i in range(0, 1000):
@@ -144,15 +132,19 @@ def explain_maxval_size(pack=True):
             tmp.append(shard_and_committee)
         indices_heights.append(tmp)
 
+    cross_links = []
+    for i in range(0, 1000):
+        cross_links.append(crosslink_record)
+
+    crystallized_state = messages_capnp.CrystallizedState.new_message()
+    crystallized_state.validators = validatorlist
+    crystallized_state.lastStateRecalc = helpers.MAX_U64
     crystallized_state.indicesForHeights = indices_heights
     crystallized_state.lastJustifiedSlot = helpers.MAX_U64
     crystallized_state.jutifiedStreak = helpers.MAX_U64
     crystallized_state.lastFinalizedSlot = helpers.MAX_U64
     crystallized_state.currentDynasty = helpers.MAX_U64
     crystallized_state.crosslinkingStartShard = helpers.MAX_U16
-    cross_links = []
-    for i in range(0, 1000):
-        cross_links.append(crosslink_record)
     crystallized_state.crosslinkRecords = cross_links
     crystallized_state.totalDeposits = helpers.MAX_BYTES
     crystallized_state.dynastySeed = helpers.MAX_BYTES

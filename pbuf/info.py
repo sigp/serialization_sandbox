@@ -160,20 +160,24 @@ def explain_default_packed():
     }
 
 
-def explain_max_size():
+def explain_maxval_size():
     """
     Show the size of the object when using max values
     (UNPACKED)
     """
-    # Size of struct with only defaults
+    # Attestation Records
     attestation_record = messages_pb2.AttestationRecord()
     attestation_record.slot = helpers.MAX_U64
-    attestation_record.shard_id = helpers.MAX_U64
+    attestation_record.shard_id = helpers.MAX_U16
     attestation_record.shard_block_hash = helpers.MAX_BYTES
     attestation_record.attester_bitfield = helpers.MAX_BYTES
     for i in range(0, 64):
         attestation_record.aggregate_sig.append(helpers.MAX_U64)
 
+    for i in range(0, 64):
+        attestation_record.oblique_parent_hashes.append(helpers.MAX_BYTES)
+
+    # Blocks
     block = messages_pb2.Block()
     block.parent_hash = helpers.MAX_BYTES
     block.slot_number = helpers.MAX_U64
@@ -184,21 +188,26 @@ def explain_max_size():
     for i in range(0, 2000):
         arecord = block.attestations.add()
         arecord.slot = helpers.MAX_U64
-        arecord.shard_id = helpers.MAX_U64
+        arecord.shard_id = helpers.MAX_U16
         arecord.shard_block_hash = helpers.MAX_BYTES
         arecord.attester_bitfield = helpers.MAX_BYTES
         for i in range(0, 64):
             arecord.aggregate_sig.append(helpers.MAX_U64)
+        for i in range(0, 64):
+            arecord.oblique_parent_hashes.append(helpers.MAX_BYTES)
 
+    # Shard and Committee
     shard_and_committee = messages_pb2.ShardAndCommittee()
-    shard_and_committee.shard_id = helpers.MAX_U64
+    shard_and_committee.shard_id = helpers.MAX_U16
     for i in range(0, 1000):
         shard_and_committee.committee.append(helpers.MAX_U32)
 
+    # Crosslink Record
     crosslink_record = messages_pb2.CrosslinkRecord()
     crosslink_record.dynasty = helpers.MAX_U64
     crosslink_record.blockhash = helpers.MAX_BYTES
 
+    # Validator Record
     validator_record = messages_pb2.ValidatorRecord()
     validator_record.public_key = helpers.MAX_U64
     validator_record.withdrawal_shard = helpers.MAX_U16
@@ -208,6 +217,7 @@ def explain_max_size():
     validator_record.start_dynasty = helpers.MAX_U64
     validator_record.end_dynasty = helpers.MAX_U64
 
+    # Crystallized State
     crystallized_state = messages_pb2.CrystallizedState()
     crystallized_state.last_state_recalc = helpers.MAX_U64
     crystallized_state.justified_streak = helpers.MAX_U64
@@ -267,20 +277,24 @@ def explain_max_size():
     }
 
 
-def explain_max_packed():
+def explain_maxval_packed():
     """
     Show the size of the object when using max values
     (PACKED)
     """
-    # Size of struct with only defaults
+    # Attestation Records
     attestation_record = packedmessages_pb2.PackedAttestationRecord()
     attestation_record.slot = helpers.MAX_U64
-    attestation_record.shard_id = helpers.MAX_U64
+    attestation_record.shard_id = helpers.MAX_U16
     attestation_record.shard_block_hash = helpers.MAX_BYTES
     attestation_record.attester_bitfield = helpers.MAX_BYTES
     for i in range(0, 64):
         attestation_record.aggregate_sig.append(helpers.MAX_U64)
 
+    for i in range(0, 64):
+        attestation_record.oblique_parent_hashes.append(helpers.MAX_BYTES)
+
+    # Blocks
     block = packedmessages_pb2.PackedBlock()
     block.parent_hash = helpers.MAX_BYTES
     block.slot_number = helpers.MAX_U64
@@ -291,21 +305,26 @@ def explain_max_packed():
     for i in range(0, 2000):
         arecord = block.attestations.add()
         arecord.slot = helpers.MAX_U64
-        arecord.shard_id = helpers.MAX_U64
+        arecord.shard_id = helpers.MAX_U16
         arecord.shard_block_hash = helpers.MAX_BYTES
         arecord.attester_bitfield = helpers.MAX_BYTES
         for i in range(0, 64):
             arecord.aggregate_sig.append(helpers.MAX_U64)
+        for i in range(0, 64):
+            arecord.oblique_parent_hashes.append(helpers.MAX_BYTES)
 
+    # Shard and Committee
     shard_and_committee = packedmessages_pb2.PackedShardAndCommittee()
-    shard_and_committee.shard_id = helpers.MAX_U64
+    shard_and_committee.shard_id = helpers.MAX_U16
     for i in range(0, 1000):
         shard_and_committee.committee.append(helpers.MAX_U32)
 
+    # Crosslink Record
     crosslink_record = packedmessages_pb2.PackedCrosslinkRecord()
     crosslink_record.dynasty = helpers.MAX_U64
     crosslink_record.blockhash = helpers.MAX_BYTES
 
+    # Validator Record
     validator_record = packedmessages_pb2.PackedValidatorRecord()
     validator_record.public_key = helpers.MAX_U64
     validator_record.withdrawal_shard = helpers.MAX_U16
@@ -315,6 +334,7 @@ def explain_max_packed():
     validator_record.start_dynasty = helpers.MAX_U64
     validator_record.end_dynasty = helpers.MAX_U64
 
+    # Crystallized State
     crystallized_state = packedmessages_pb2.PackedCrystallizedState()
     crystallized_state.last_state_recalc = helpers.MAX_U64
     crystallized_state.justified_streak = helpers.MAX_U64
@@ -385,8 +405,8 @@ if __name__ == '__main__':
     results = []
     results.append(explain_default_size())
     results.append(explain_default_packed())
-    results.append(explain_max_size())
-    results.append(explain_max_packed())
+    results.append(explain_maxval_size())
+    results.append(explain_maxval_packed())
 
     objects = ['attestationRecord', 'block', 'shardAndCommittee',
                'crosslinkRecord', 'validatorRecord', 'crystallizedState']
