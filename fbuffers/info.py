@@ -89,6 +89,105 @@ def explain_default_size():
     }
 
 
+def explain_maxval_size():
+    """
+    Show the size of the object when using max values
+    """
+
+    # Initialise the builders
+    attestation_builder = flatbuffers.Builder(0)
+    block_builder = flatbuffers.Builder(0)
+    crosslink_builder = flatbuffers.Builder(0)
+    shard_committee_builder = flatbuffers.Builder(0)
+    shard_committee_array_builder = flatbuffers.Builder(0)
+    validator_builder = flatbuffers.Builder(0)
+    crystallized_builder = flatbuffers.Builder(0)
+
+    # Build the attestation record
+    BeaconChain.Messages.AttestationRecord.AttestationRecordStart(attestation_builder)
+    BeaconChain.Messages.AttestationRecord.AttestationRecordAddSlot(attestation_builder, helpers.MAX_U64)
+
+    # shard block hash
+    shard_block_builder = flatbuffers.Builder(0)
+    BeaconChain.Messages.AttestationRecord.AttestationRecordStartShardBlockHashVector(shard_block_builder, 32)
+    for i in reversed(range(0, 32)):
+        shard_block_builder.PrependByte(b'\xff')
+    shard_block_hash = shard_block_builder.EndVector(32)
+    BeaconChain.Messages.AttestationRecord.AttestationRecordAddShardBlockHash(attestation_builder, shard_block_hash)
+
+    BeaconChain.Messages.AttestationRecord.AttestationRecordStartAttesterBitfieldVector(attestation_builder, 32)
+    for i in reversed(range(0, 32)):
+        attestation_builder.PrependByte(b'\xff')
+    attester_bitfield = attestation_builder.EndVector(32)
+    BeaconChain.Messages.AttestationRecord.AttestationRecordAddAttesterBitfield(attestation_builder, attester_bitfield)
+
+    # Oblique parent hashes
+    BeaconChain.Messages.AttestationRecord.AttestationRecordStartObliqueParentHashesVector(attestation_builder, 100)
+    for x in range(0, 100):
+        oblique_builder = flatbuffers.Builder(0)
+        BeaconChain.Messages.ByteArray.ByteArrayStart(oblique_builder)
+        BeaconChain.Messages.ByteArray.ByteArrayStartBytesVector(oblique_builder, 32)
+        for i in reversed(range(0, 32)):
+            oblique_builder.PrependByte(b'\xff')
+        entry = oblique_builder.EndVector(32)
+        BeaconChain.Messages.ByteArray.ByteArrayAddBytes(oblique_builder, entry)
+        obl = BeaconChain.Messages.ByteArray.ByteArrayEnd(oblique_builder)
+        attestation_builder.PrependUOffsetTRelative(obl)
+    oblique_parent_hashes = attestation_builder.EndVector(100)
+    BeaconChain.Messages.AttestationRecord.AttestationRecordAddObliqueParentHashes(attestation_builder, oblique_parent_hashes)
+
+    attestation_record = BeaconChain.Messages.AttestationRecord.AttestationRecordEnd(attestation_builder)
+    attestation_builder.Finish(attestation_record)
+    attestation_record_bytes = attestation_builder.Output()
+
+    # Build the block
+    BeaconChain.Messages.Block.BlockStart(block_builder)
+    block = BeaconChain.Messages.Block.BlockEnd(block_builder)
+    block_builder.Finish(block)
+    block_bytes = block_builder.Output()
+
+    # Build the Crosslink Record
+    BeaconChain.Messages.CrosslinkRecord.CrosslinkRecordStart(crosslink_builder)
+    crosslink_record = BeaconChain.Messages.CrosslinkRecord.CrosslinkRecordEnd(crosslink_builder)
+    crosslink_builder.Finish(crosslink_record)
+    crosslink_record_bytes = crosslink_builder.Output()
+
+    # Build the Shard And Committee
+    BeaconChain.Messages.ShardAndCommittee.ShardAndCommitteeStart(shard_committee_builder)
+    shard_and_committee = BeaconChain.Messages.ShardAndCommittee.ShardAndCommitteeEnd(shard_committee_builder)
+    shard_committee_builder.Finish(shard_and_committee)
+    shard_and_committee_bytes = shard_committee_builder.Output()
+
+    # Build the Validator Record
+    BeaconChain.Messages.ValidatorRecord.ValidatorRecordStart(validator_builder)
+    validator_record = BeaconChain.Messages.ValidatorRecord.ValidatorRecordEnd(validator_builder)
+    validator_builder.Finish(validator_record)
+    validator_record_bytes = validator_builder.Output()
+
+    # Build the CrystallizedState
+    BeaconChain.Messages.CrystallizedState.CrystallizedStateStart(crystallized_builder)
+    crystallized_state = BeaconChain.Messages.CrystallizedState.CrystallizedStateEnd(crystallized_builder)
+    crystallized_builder.Finish(crystallized_state)
+    crystallized_state_bytes = crystallized_builder.Output()
+
+    if (verbose):
+        print('{} | {}'.format(len(attestation_record_bytes), attestation_record_bytes))
+        print('{} | {}'.format(len(block_bytes), block_bytes))
+        print('{} | {}'.format(len(shard_and_committee_bytes), shard_and_committee_bytes))
+        print('{} | {}'.format(len(crosslink_record_bytes), crosslink_record_bytes))
+        print('{} | {}'.format(len(validator_record_bytes), validator_record_bytes))
+        print('{} | {}'.format(len(crystallized_state_bytes), crystallized_state_bytes))
+
+    return {
+        'attestationRecord': len(attestation_record_bytes),
+        'block': len(block_bytes),
+        'shardAndCommittee': len(shard_and_committee_bytes),
+        'crosslinkRecord': len(crosslink_record_bytes),
+        'validatorRecord': len(validator_record_bytes),
+        'crystallizedState': len(crystallized_state_bytes),
+    }
+
+
 if (__name__ == '__main__'):
 
     # Parse the arguments to check verbosity
@@ -100,6 +199,8 @@ if (__name__ == '__main__'):
 
     results = []
     results.append(explain_default_size())
+#   TODO: fix
+#    results.append(explain_maxval_size())
 
     objects = ['attestationRecord', 'block', 'shardAndCommittee',
                'crosslinkRecord', 'validatorRecord', 'crystallizedState']

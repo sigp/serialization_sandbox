@@ -10,7 +10,7 @@ import helpers
 # Import the cap'n proto schema
 import messages_capnp
 
-verbose = 0
+verbose = False
 
 
 def explain_default_size(pack=True):
@@ -71,6 +71,12 @@ def explain_maxval_size(pack=True):
     attestation_record.shardId = helpers.MAX_U16
     attestation_record.shardBlockHash = helpers.MAX_BYTES
     attestation_record.attesterBitfield = helpers.MAX_BYTES
+
+    obl_hashes = []
+    for i in range(0, 64):
+        obl_hashes.append(b'\xff' * 32)
+
+    attestation_record.obliqueParentHashes = obl_hashes
 
     ag_sig = []
     for i in range(0, 64):

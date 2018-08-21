@@ -3,7 +3,7 @@
 struct AttestationRecord {
     slot @0 :UInt64 = 0;
     shardId @1 :UInt16 = 0;
-    obliqueParentHashes @2 :List(Text) = [];
+    obliqueParentHashes @2 :List(Data) = [];
     shardBlockHash @3 :Data = 0x"00";
     attesterBitfield @4 :Data = "";
     aggregateSig @5 :List(Data) = [0x"00", 0x"00"];
