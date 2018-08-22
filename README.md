@@ -68,18 +68,30 @@ $ flatc messages.fbs --python
 
 ### How to run
 
-To run the entire test suite
+#### Setup
 
-```
-$ pip install -r requirements.txt
+Install Python deps:
 
-$ ./test.sh
-```
-
-(May be required)
 ```
 $ pip install -r beacon_chain/requirements.txt
 ```
+
+Ensure git sub-modules are present:
+
+```
+$ git submodule init
+$ git submodule update
+```
+
+
+#### Running
+
+To run the entire test suite
+
+```
+$ ./test.sh
+```
+
 
 **OR**
 
