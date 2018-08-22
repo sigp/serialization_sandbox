@@ -37,6 +37,27 @@ the protobuf implementation and adhere to `Uint`.
 
 ## Running the tests
 
+### Install dependencies
+
+Install Python deps for the sandbox and Beacon Chain:
+
+```
+$ pip install -r requirements.txt
+$ pip install -r beacon_chain/requirements.txt
+```
+
+Ensure git sub-modules are present:
+
+```
+$ git submodule init
+$ git submodule update
+```
+
+Install `flatc` the [FlatBuffers
+compiler](https://google.github.io/flatbuffers/flatbuffers_guide_using_schema_compiler.html).
+On Arch Linux, you can use the `flatbuffers-static` AUR package, other
+platforms should be well supported too.
+
 ### Building the messages
 
 ### Using the scripts
@@ -67,24 +88,6 @@ $ flatc messages.fbs --python
 ```
 
 ### How to run
-
-#### Setup
-
-Install Python deps:
-
-```
-$ pip install -r beacon_chain/requirements.txt
-```
-
-Ensure git sub-modules are present:
-
-```
-$ git submodule init
-$ git submodule update
-```
-
-
-#### Running
 
 To run the entire test suite
 
