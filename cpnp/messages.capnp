@@ -44,7 +44,7 @@ struct ValidatorRecord {
 struct CrystallizedState {
     validators @0 :List(ValidatorRecord) = [];
     lastStateRecalc @1 :UInt64 = 0;
-    indicesForHeights @2 :List(List(ShardAndCommittee)) = [];
+    indicesForSlots @2 :List(List(ShardAndCommittee)) = [];
     lastJustifiedSlot @3 :UInt64 = 0;
     jutifiedStreak @4 :UInt64 = 0;
     lastFinalizedSlot @5 :UInt64 = 0;

@@ -1,3 +1,14 @@
+#!/usr/bin/env python
+
+################################################################################
+# Note:     The current numbers for the max values are rough estimates
+#           or placeholders. TODO is to find correct/realistic estimates and
+#           provide suitable information.
+#
+# Note_2:   ``helpers.PLACEHOLDER`` denotes placeholder information that should
+#           be changed.
+################################################################################
+
 import capnp
 import argparse
 import texttable
@@ -65,13 +76,10 @@ def explain_maxval_size(pack=True):
     Define whether packed or unpacked
     """
     # Attestation Records
+    # TODO replace oblique hash loop with correct size.
     obl_hashes = []
     for i in range(0, 64):
         obl_hashes.append(helpers.MAX_BYTES)
-
-    ag_sig = []
-    for i in range(0, 64):
-        ag_sig.append(helpers.MAX_BYTES)
 
     attestation_record = messages_capnp.AttestationRecord.new_message()
     attestation_record.slot = helpers.MAX_U64
@@ -79,11 +87,12 @@ def explain_maxval_size(pack=True):
     attestation_record.shardBlockHash = helpers.MAX_BYTES
     attestation_record.attesterBitfield = helpers.MAX_BYTES
     attestation_record.obliqueParentHashes = obl_hashes
-    attestation_record.aggregateSig = ag_sig
+    attestation_record.aggregateSig = [helpers.MAX_BYTES, helpers.MAX_BYTES]
 
     # Block
+    # TODO: provide realistic number for attestations
     attestRecords = []
-    for i in range(0, 2000):
+    for i in range(0, helpers.MAX_ATTESTATIONS):
         attestRecords.append(attestation_record)
 
     block = messages_capnp.Block.new_message()
@@ -96,8 +105,9 @@ def explain_maxval_size(pack=True):
     block.crystallizedStateRoot = helpers.MAX_BYTES
 
     # Shard and Committee
+    # TODO: replace placeholder
     committees = []
-    for i in range(0, 1000):
+    for i in range(0, helpers.PLACEHOLDER):
         committees.append(helpers.MAX_U32)
 
     shard_and_committee = messages_capnp.ShardAndCommittee.new_message()
@@ -113,7 +123,7 @@ def explain_maxval_size(pack=True):
     validator_record = messages_capnp.ValidatorRecord.new_message()
     validator_record.pubkey = helpers.MAX_BYTES
     validator_record.withdrawalShard = helpers.MAX_U16
-    validator_record.withdrawalAddress = helpers.MAX_BYTES
+    validator_record.withdrawalAddress = helpers.ADDRESS_BYTES
     validator_record.randaoCommitment = helpers.MAX_BYTES
     validator_record.balance = helpers.MAX_U64
     validator_record.startDynasty = helpers.MAX_U64
@@ -122,24 +132,26 @@ def explain_maxval_size(pack=True):
     # CrystallizedState
 
     validatorlist = []
-    for i in range(0, 10000):
+    for i in range(0, helpers.MAX_VALIDATORS):
         validatorlist.append(validator_record)
 
+    # TODO: replace placeholder
     indices_heights = []
-    for i in range(0, 1000):
+    for i in range(0, helpers.PLACEHOLDER):
         tmp = []
         for j in range(0, 10):
             tmp.append(shard_and_committee)
         indices_heights.append(tmp)
 
+    # TODO: replace placeholder
     cross_links = []
-    for i in range(0, 1000):
+    for i in range(0, helpers.PLACEHOLDER):
         cross_links.append(crosslink_record)
 
     crystallized_state = messages_capnp.CrystallizedState.new_message()
     crystallized_state.validators = validatorlist
     crystallized_state.lastStateRecalc = helpers.MAX_U64
-    crystallized_state.indicesForHeights = indices_heights
+    crystallized_state.indicesForSlots = indices_heights
     crystallized_state.lastJustifiedSlot = helpers.MAX_U64
     crystallized_state.jutifiedStreak = helpers.MAX_U64
     crystallized_state.lastFinalizedSlot = helpers.MAX_U64
