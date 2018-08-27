@@ -1,5 +1,14 @@
 #!/usr/bin/env python
 
+################################################################################
+# Note:     The current numbers for the max values are rough estimates
+#           or placeholders. TODO is to find correct/realistic estimates and
+#           provide suitable information.
+#
+# Note_2:   ``helpers.PLACEHOLDER`` denotes placeholder information that should
+#           be changed.
+################################################################################
+
 import flatbuffers
 import argparse
 import texttable
@@ -103,42 +112,81 @@ def explain_maxval_size():
     validator_builder = flatbuffers.Builder(0)
     crystallized_builder = flatbuffers.Builder(0)
 
-    # Build the attestation record
-    BeaconChain.Messages.AttestationRecord.AttestationRecordStart(attestation_builder)
-    BeaconChain.Messages.AttestationRecord.AttestationRecordAddSlot(attestation_builder, helpers.MAX_U64)
+    # Attestation Record {
 
-    # shard block hash
-    shard_block_builder = flatbuffers.Builder(0)
-    BeaconChain.Messages.AttestationRecord.AttestationRecordStartShardBlockHashVector(shard_block_builder, 32)
+    # Shard block hash
+    BeaconChain.Messages.AttestationRecord.AttestationRecordStartShardBlockHashVector(attestation_builder, 32)
     for i in reversed(range(0, 32)):
-        shard_block_builder.PrependByte(b'\xff')
-    shard_block_hash = shard_block_builder.EndVector(32)
-    BeaconChain.Messages.AttestationRecord.AttestationRecordAddShardBlockHash(attestation_builder, shard_block_hash)
+        attestation_builder.PrependByte(255)
+    shard_block_hash = attestation_builder.EndVector(32)
 
+    # Awwwwwer bitfield
     BeaconChain.Messages.AttestationRecord.AttestationRecordStartAttesterBitfieldVector(attestation_builder, 32)
     for i in reversed(range(0, 32)):
-        attestation_builder.PrependByte(b'\xff')
+        attestation_builder.PrependByte(255)
     attester_bitfield = attestation_builder.EndVector(32)
-    BeaconChain.Messages.AttestationRecord.AttestationRecordAddAttesterBitfield(attestation_builder, attester_bitfield)
 
     # Oblique parent hashes
-    BeaconChain.Messages.AttestationRecord.AttestationRecordStartObliqueParentHashesVector(attestation_builder, 100)
-    for x in range(0, 100):
-        oblique_builder = flatbuffers.Builder(0)
-        BeaconChain.Messages.ByteArray.ByteArrayStart(oblique_builder)
-        BeaconChain.Messages.ByteArray.ByteArrayStartBytesVector(oblique_builder, 32)
-        for i in reversed(range(0, 32)):
-            oblique_builder.PrependByte(b'\xff')
-        entry = oblique_builder.EndVector(32)
-        BeaconChain.Messages.ByteArray.ByteArrayAddBytes(oblique_builder, entry)
-        obl = BeaconChain.Messages.ByteArray.ByteArrayEnd(oblique_builder)
-        attestation_builder.PrependUOffsetTRelative(obl)
-    oblique_parent_hashes = attestation_builder.EndVector(100)
-    BeaconChain.Messages.AttestationRecord.AttestationRecordAddObliqueParentHashes(attestation_builder, oblique_parent_hashes)
+    obl_hash_bytearrays = []
 
+    # Make each byte array
+    for i in range(0, 64):
+        # Build the bytes vector for inside the ByteArray (...thanks FlatBuffers for non-nesting capabilities)
+        BeaconChain.Messages.ByteArray.ByteArrayStartBytesVector(attestation_builder, 32)
+        for i in reversed(range(0, 32)):
+            # b'\xff' equivalent
+            attestation_builder.PrependByte(255)
+        obl_hash_bytes = attestation_builder.EndVector(32)
+
+        # Build the byte array
+        BeaconChain.Messages.ByteArray.ByteArrayStart(attestation_builder)
+        BeaconChain.Messages.ByteArray.ByteArrayAddBytes(attestation_builder, obl_hash_bytes)
+        ba = BeaconChain.Messages.ByteArray.ByteArrayEnd(attestation_builder)
+        obl_hash_bytearrays.append(ba)
+
+    # Write the oblique parent hashes to the builder
+    BeaconChain.Messages.AttestationRecord.AttestationRecordStartObliqueParentHashesVector(attestation_builder, 64)
+    for i in reversed(range(0, 64)):
+        attestation_builder.PrependUOffsetTRelative(obl_hash_bytearrays[i])
+    oblique_parent_hashes = attestation_builder.EndVector(64)
+
+    # Aggregate signatures
+    ag_sig_bytearrays = []
+
+    # Make each aggregate signature (0xFF for 32 bytes)
+    for i in range(0, 2):
+        # Build the bytes vector for inside the ByteArray (...thanks FlatBuffers for non-nesting capabilities)
+        BeaconChain.Messages.ByteArray.ByteArrayStartBytesVector(attestation_builder, 32)
+        for i in reversed(range(0, 32)):
+            # b'\xff' equivalent
+            attestation_builder.PrependByte(255)
+        obl_hash_bytes = attestation_builder.EndVector(32)
+
+        # Build the byte array
+        BeaconChain.Messages.ByteArray.ByteArrayStart(attestation_builder)
+        BeaconChain.Messages.ByteArray.ByteArrayAddBytes(attestation_builder, obl_hash_bytes)
+        ba = BeaconChain.Messages.ByteArray.ByteArrayEnd(attestation_builder)
+        ag_sig_bytearrays.append(ba)
+
+    # Add the signatures
+    BeaconChain.Messages.AttestationRecord.AttestationRecordStartAggregateSigVector(attestation_builder, 2)
+    attestation_builder.PrependUOffsetTRelative(ag_sig_bytearrays[0])
+    attestation_builder.PrependUOffsetTRelative(ag_sig_bytearrays[1])
+    aggregate_signature = attestation_builder.EndVector(2)
+
+    # Builder
+    BeaconChain.Messages.AttestationRecord.AttestationRecordStart(attestation_builder)
+    BeaconChain.Messages.AttestationRecord.AttestationRecordAddSlot(attestation_builder, helpers.MAX_U64)
+    BeaconChain.Messages.AttestationRecord.AttestationRecordAddShardId(attestation_builder, helpers.MAX_U16)
+    BeaconChain.Messages.AttestationRecord.AttestationRecordAddShardBlockHash(attestation_builder, shard_block_hash)
+    BeaconChain.Messages.AttestationRecord.AttestationRecordAddAttesterBitfield(attestation_builder, attester_bitfield)
+    BeaconChain.Messages.AttestationRecord.AttestationRecordAddObliqueParentHashes(attestation_builder, oblique_parent_hashes)
+    BeaconChain.Messages.AttestationRecord.AttestationRecordAddAggregateSig(attestation_builder, aggregate_signature)
     attestation_record = BeaconChain.Messages.AttestationRecord.AttestationRecordEnd(attestation_builder)
     attestation_builder.Finish(attestation_record)
     attestation_record_bytes = attestation_builder.Output()
+
+    # } (End Attestation Record)
 
     # Build the block
     BeaconChain.Messages.Block.BlockStart(block_builder)
@@ -200,13 +248,13 @@ if (__name__ == '__main__'):
     results = []
     results.append(explain_default_size())
 #   TODO: fix
-#    results.append(explain_maxval_size())
+    results.append(explain_maxval_size())
 
     objects = ['attestationRecord', 'block', 'shardAndCommittee',
                'crosslinkRecord', 'validatorRecord', 'crystallizedState']
 
     table = texttable.Texttable()
-    table.header(['Object', 'Default'])
+    table.header(['Object', 'Default', 'Max'])
 
     for item in objects:
         res = [item]

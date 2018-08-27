@@ -33,6 +33,9 @@ echo '========== FLATBUFFERS =========='
 echo '================================='
 
 echo 'NOTE: The Flatbuffers information file is incomplete.'
+echo 'NOTE_2: Due to complexity of Flatbuffers [it does not like nested
+structures at alllll] and the size of attestation record - we are pursuing
+different methods. (May be revisited)'
 python fbuffers/info.py
 
 
