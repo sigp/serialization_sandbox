@@ -1,6 +1,19 @@
 #!/usr/bin/env python
 
 ################################################################################
+# [ NOT PURSUED ]
+# Due to the complexity in FlatBuffers surrounding nested structures, we have
+# decided to pursue other forms of serialization.
+# Factors to leave include:
+#   - Size of code required to serialize
+#   - Size of bytes produced
+#   - Inefficiency of handling nested structures
+#
+# Please note: this may be revisited at a later stage, or if there are inputs
+# from the community, please feel free to work on this :)
+################################################################################
+
+################################################################################
 # Note:     The current numbers for the max values are rough estimates
 #           or placeholders. TODO is to find correct/realistic estimates and
 #           provide suitable information.
