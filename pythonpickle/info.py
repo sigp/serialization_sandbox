@@ -57,7 +57,7 @@ def explain_default_size():
         'block': len(block_bytes),
         'shardAndCommittee': len(shard_and_committee_bytes),
         'crosslinkRecord': len(crosslink_record_bytes),
-        'validatorRecord': 0,
+        'validatorRecord': "N/A",
         'crystallizedState': len(crystallized_state_bytes),
     }
 
