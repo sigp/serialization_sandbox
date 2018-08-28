@@ -43,7 +43,9 @@ import BeaconChain.Messages.ShardAndCommitteeArray
 import BeaconChain.Messages.ByteArray
 import BeaconChain.Messages.CrystallizedState
 import BeaconChain.Messages.ValidatorRecord
+
 verbose = False
+NA = "N/A"
 
 
 def explain_default_size():
@@ -243,11 +245,11 @@ def explain_maxval_size():
 
     return {
         'attestationRecord': len(attestation_record_bytes),
-        'block': len(block_bytes),
-        'shardAndCommittee': len(shard_and_committee_bytes),
-        'crosslinkRecord': len(crosslink_record_bytes),
-        'validatorRecord': len(validator_record_bytes),
-        'crystallizedState': len(crystallized_state_bytes),
+        'block': NA,
+        'shardAndCommittee': NA,
+        'crosslinkRecord': NA,
+        'validatorRecord': NA,
+        'crystallizedState': NA,
     }
 
 

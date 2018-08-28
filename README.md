@@ -95,6 +95,14 @@ To run the entire test suite
 $ ./test.sh
 ```
 
+or
+
+```
+$ ./main.py
+```
+```
+$ python main.py
+```
 
 **OR**
 
