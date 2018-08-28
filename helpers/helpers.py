@@ -21,3 +21,10 @@ ADDRESS_BYTES = b'\xff' * 20
 MAX_VALIDATORS = 100000
 MAX_ATTESTATIONS = 100000
 PLACEHOLDER = 1000
+
+
+def compare_messages(a, b):
+    attr_a = [getattr(a, x) for x in a.fields if not x.startswith('__') and not callable(getattr(a, x))]
+    attr_b = [getattr(b, x) for x in b.fields if not x.startswith('__') and not callable(getattr(b, x))]
+
+    return (attr_a == attr_b)

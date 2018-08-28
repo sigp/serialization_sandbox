@@ -15,13 +15,9 @@ import argparse
 import texttable
 
 sys.path.append(os.path.join(os.path.dirname(sys.path[0]), 'beacon_chain/'))
-
 sys.path.append(os.path.dirname(sys.path[0]))
-from helpers import helpers
 
-from beacon_chain.utils.simpleserialize import (
-    serialize
-)
+from helpers import helpers
 
 from beacon_chain.state.attestation_record import AttestationRecord
 from beacon_chain.state.block import Block
@@ -30,31 +26,32 @@ from beacon_chain.state.shard_and_committee import ShardAndCommittee
 from beacon_chain.state.validator_record import ValidatorRecord
 from beacon_chain.state.crystallized_state import CrystallizedState
 
+import messages
+import msgpack
+
 verbose = False
 
 
 def explain_default_size():
-    """
-    Show the size of the serialized object with defaults
-    Note: ValidatorRecord omitted (has no defaults)
-    """
     attestation_record = AttestationRecord()
     block = Block()
     crosslink_record = CrosslinkRecord()
     shard_and_committee = ShardAndCommittee()
     crystallized_state = CrystallizedState()
 
-    attestation_record_bytes = serialize(attestation_record, type(attestation_record))
-    block_bytes = serialize(block, type(block))
-    crosslink_record_bytes = serialize(crosslink_record, type(crosslink_record))
-    shard_and_committee_bytes = serialize(shard_and_committee, type(shard_and_committee))
-    crystallized_state_bytes = serialize(crystallized_state, type(crystallized_state))
+    attestation_record_bytes = msgpack.packb(attestation_record, default=messages.encode_attestation)
+    block_bytes = msgpack.packb(block, default=messages.encode_block)
+    crosslink_record_bytes = msgpack.packb(crosslink_record, default=messages.encode_crosslink)
+    validator_record_bytes = 0
+    shard_and_committee_bytes = msgpack.packb(shard_and_committee, default=messages.encode_shard_and_committee)
+    crystallized_state_bytes = msgpack.packb(crystallized_state, default=messages.encode_crystallized_state)
 
     if (verbose):
         print('{} | {}'.format(len(attestation_record_bytes), attestation_record_bytes))
         print('{} | {}'.format(len(block_bytes), block_bytes))
         print('{} | {}'.format(len(shard_and_committee_bytes), shard_and_committee_bytes))
         print('{} | {}'.format(len(crosslink_record_bytes), crosslink_record_bytes))
+        print('{} | {}'.format(len(validator_record_bytes), validator_record_bytes))
         print('{} | {}'.format(len(crystallized_state_bytes), crystallized_state_bytes))
 
     return {
@@ -68,10 +65,6 @@ def explain_default_size():
 
 
 def explain_maxval_size():
-    """
-    Show the size of the object when using maximum values
-    """
-
     # Attestation Record
     # TODO replace oblique hash loop with correct size
     obl_hashes = []
@@ -164,12 +157,12 @@ def explain_maxval_size():
         last_state_recalc=helpers.MAX_I64,
     )
 
-    attestation_record_bytes = serialize(attestation_record, type(attestation_record))
-    block_bytes = serialize(block, type(block))
-    crosslink_record_bytes = serialize(crosslink_record, type(crosslink_record))
-    validator_record_bytes = serialize(validator_record, type(validator_record))
-    shard_and_committee_bytes = serialize(shard_and_committee, type(shard_and_committee))
-    crystallized_state_bytes = serialize(crystallized_state, type(crystallized_state))
+    attestation_record_bytes = msgpack.packb(attestation_record, default=messages.encode_attestation)
+    block_bytes = msgpack.packb(block, default=messages.encode_block)
+    crosslink_record_bytes = msgpack.packb(crosslink_record, default=messages.encode_crosslink)
+    validator_record_bytes = msgpack.packb(validator_record, default=messages.encode_validator_record)
+    shard_and_committee_bytes = msgpack.packb(shard_and_committee, default=messages.encode_shard_and_committee)
+    crystallized_state_bytes = msgpack.packb(crystallized_state, default=messages.encode_crystallized_state)
 
     if (verbose):
         print('{} | {}'.format(len(attestation_record_bytes), attestation_record_bytes))

@@ -14,14 +14,11 @@ import os
 import argparse
 import texttable
 
+
 sys.path.append(os.path.join(os.path.dirname(sys.path[0]), 'beacon_chain/'))
 
 sys.path.append(os.path.dirname(sys.path[0]))
 from helpers import helpers
-
-from beacon_chain.utils.simpleserialize import (
-    serialize
-)
 
 from beacon_chain.state.attestation_record import AttestationRecord
 from beacon_chain.state.block import Block
@@ -30,25 +27,23 @@ from beacon_chain.state.shard_and_committee import ShardAndCommittee
 from beacon_chain.state.validator_record import ValidatorRecord
 from beacon_chain.state.crystallized_state import CrystallizedState
 
+import pickle
+
 verbose = False
 
 
 def explain_default_size():
-    """
-    Show the size of the serialized object with defaults
-    Note: ValidatorRecord omitted (has no defaults)
-    """
     attestation_record = AttestationRecord()
     block = Block()
     crosslink_record = CrosslinkRecord()
     shard_and_committee = ShardAndCommittee()
     crystallized_state = CrystallizedState()
 
-    attestation_record_bytes = serialize(attestation_record, type(attestation_record))
-    block_bytes = serialize(block, type(block))
-    crosslink_record_bytes = serialize(crosslink_record, type(crosslink_record))
-    shard_and_committee_bytes = serialize(shard_and_committee, type(shard_and_committee))
-    crystallized_state_bytes = serialize(crystallized_state, type(crystallized_state))
+    attestation_record_bytes = pickle.dumps(attestation_record)
+    block_bytes = pickle.dumps(block)
+    crosslink_record_bytes = pickle.dumps(crosslink_record)
+    shard_and_committee_bytes = pickle.dumps(shard_and_committee)
+    crystallized_state_bytes = pickle.dumps(crystallized_state)
 
     if (verbose):
         print('{} | {}'.format(len(attestation_record_bytes), attestation_record_bytes))
@@ -68,10 +63,6 @@ def explain_default_size():
 
 
 def explain_maxval_size():
-    """
-    Show the size of the object when using maximum values
-    """
-
     # Attestation Record
     # TODO replace oblique hash loop with correct size
     obl_hashes = []
@@ -164,12 +155,12 @@ def explain_maxval_size():
         last_state_recalc=helpers.MAX_I64,
     )
 
-    attestation_record_bytes = serialize(attestation_record, type(attestation_record))
-    block_bytes = serialize(block, type(block))
-    crosslink_record_bytes = serialize(crosslink_record, type(crosslink_record))
-    validator_record_bytes = serialize(validator_record, type(validator_record))
-    shard_and_committee_bytes = serialize(shard_and_committee, type(shard_and_committee))
-    crystallized_state_bytes = serialize(crystallized_state, type(crystallized_state))
+    attestation_record_bytes = pickle.dumps(attestation_record)
+    block_bytes = pickle.dumps(block)
+    crosslink_record_bytes = pickle.dumps(crosslink_record)
+    shard_and_committee_bytes = pickle.dumps(shard_and_committee)
+    validator_record_bytes = pickle.dumps(validator_record)
+    crystallized_state_bytes = pickle.dumps(crystallized_state)
 
     if (verbose):
         print('{} | {}'.format(len(attestation_record_bytes), attestation_record_bytes))
