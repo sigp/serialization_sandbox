@@ -14,11 +14,10 @@ import os
 import argparse
 import texttable
 
-sys.path.append(os.path.join(os.path.dirname(sys.path[0]), 'helpers'))
-
 sys.path.append(os.path.join(os.path.dirname(sys.path[0]), 'beacon_chain/'))
 
-import helpers
+sys.path.append(os.path.dirname(sys.path[0]))
+from helpers import helpers
 
 from beacon_chain.utils.simpleserialize import (
     serialize

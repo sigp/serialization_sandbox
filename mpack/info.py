@@ -14,16 +14,10 @@ import os
 import argparse
 import texttable
 
-
-sys.path.append(os.path.join(os.path.dirname(sys.path[0]), 'helpers'))
-
 sys.path.append(os.path.join(os.path.dirname(sys.path[0]), 'beacon_chain/'))
+sys.path.append(os.path.dirname(sys.path[0]))
 
-import helpers
-
-from beacon_chain.utils.simpleserialize import (
-    serialize
-)
+from helpers import helpers
 
 from beacon_chain.state.attestation_record import AttestationRecord
 from beacon_chain.state.block import Block
@@ -36,6 +30,7 @@ import messages
 import msgpack
 
 verbose = False
+
 
 def explain_default_size():
     attestation_record = AttestationRecord()

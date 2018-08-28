@@ -56,4 +56,4 @@ echo '================================='
 echo '===========  Pickle   ==========='
 echo '================================='
 
-python pickle/info.py
+python pythonpickle/info.py

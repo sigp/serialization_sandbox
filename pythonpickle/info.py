@@ -15,11 +15,10 @@ import argparse
 import texttable
 
 
-sys.path.append(os.path.join(os.path.dirname(sys.path[0]), 'helpers'))
-
 sys.path.append(os.path.join(os.path.dirname(sys.path[0]), 'beacon_chain/'))
 
-import helpers
+sys.path.append(os.path.dirname(sys.path[0]))
+from helpers import helpers
 
 from beacon_chain.state.attestation_record import AttestationRecord
 from beacon_chain.state.block import Block
@@ -29,7 +28,6 @@ from beacon_chain.state.validator_record import ValidatorRecord
 from beacon_chain.state.crystallized_state import CrystallizedState
 
 import pickle
-import struct
 
 verbose = False
 
@@ -52,7 +50,6 @@ def explain_default_size():
         print('{} | {}'.format(len(block_bytes), block_bytes))
         print('{} | {}'.format(len(shard_and_committee_bytes), shard_and_committee_bytes))
         print('{} | {}'.format(len(crosslink_record_bytes), crosslink_record_bytes))
-        print('{} | {}'.format(len(validator_record_bytes), validator_record_bytes))
         print('{} | {}'.format(len(crystallized_state_bytes), crystallized_state_bytes))
 
     return {
@@ -178,7 +175,7 @@ def explain_maxval_size():
         'block': len(block_bytes),
         'shardAndCommittee': len(shard_and_committee_bytes),
         'crosslinkRecord': len(crosslink_record_bytes),
-        'validatorRecord': 0,
+        'validatorRecord': len(validator_record_bytes),
         'crystallizedState': len(crystallized_state_bytes),
     }
 
