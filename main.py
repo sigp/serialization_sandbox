@@ -66,7 +66,7 @@ def print_result_table(title, headers, row_keys, result_raw):
     print(out)
 
 
-def get_info_results():
+def get_size_results():
     """
     Get results of the informative experiments.
     """
@@ -86,20 +86,41 @@ def get_info_results():
     return results
 
 
+def display_size_results(res):
+    headers = list(SERIALIZERS.keys())
+    rows = ['attestationRecord', 'block', 'shardAndCommittee',
+            'crosslinkRecord', 'validatorRecord', 'crystallizedState']
+    print_result_table('Info: Default Values', headers, rows, res['default'])
+    print_result_table('Info: Max Values', headers, rows, res['max'])
+
+
+def get_timing_results():
+    raise NotImplementedError
+
+
+def display_timing_results(res):
+    raise NotImplementedError
+
+
 def main(args):
     """
     Run the experiments based on user arguments.
     """
     if(not(args.no_info)):
-        res = get_info_results()
+        # Select methods for a given command
+        if args.command == "message-size":
+            get_method = get_size_results
+            display_method = display_size_results
+        elif args.command == "timing":
+            get_method = get_timing_results
+            display_method = display_timing_results
+
+        # Get and display results
+        res = get_method()
         if(args.raw_output):
             print(res)
         else:
-            headers = list(SERIALIZERS.keys())
-            rows = ['attestationRecord', 'block', 'shardAndCommittee',
-                    'crosslinkRecord', 'validatorRecord', 'crystallizedState']
-            print_result_table('Info: Default Values', headers, rows, res['default'])
-            print_result_table('Info: Max Values', headers, rows, res['max'])
+            display_method(res)
 
 
 ################################################################################
@@ -107,6 +128,12 @@ def main(args):
 # TODO add other arguments as they are developed
 ################################################################################
 parser = argparse.ArgumentParser(description='Testing Cap\'n Proto')
+commands = (
+    'message-size',
+    'timing',
+)
+parser.add_argument('command', choices=commands,
+                    help='Type of benchmarking to be performed')
 parser.add_argument('-v', '--verbose', dest='verbose', action='store_true',
                     help='Verbose (Show all prints)')
 parser.add_argument('-ni', '--no-info', dest='no_info', action='store_true',

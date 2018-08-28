@@ -10,4 +10,4 @@ if [ ! -f `pwd`/pbuf/messages_pb2.py ] ||
     ./build.sh
 fi
 
-python main.py
+python main.py message-size
