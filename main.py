@@ -60,7 +60,11 @@ def print_result_table(title, headers, row_keys, result_raw):
     for item in row_keys:
         row = [item]
         for res in result_raw:
-            row.append(result_raw[res][item])
+            try:
+                val = result_raw[res][item]
+            except KeyError:
+                val = "NA"
+            row.append(val)
         table.add_row(tuple(row))
     out = table.draw()
 
