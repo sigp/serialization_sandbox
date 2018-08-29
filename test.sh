@@ -11,3 +11,4 @@ if [ ! -f `pwd`/pbuf/messages_pb2.py ] ||
 fi
 
 python main.py message-size
+python main.py timing
