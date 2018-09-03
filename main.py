@@ -15,6 +15,7 @@ sys.path.append(os.path.join(sys.path[0], "mpack"))
 sys.path.append(os.path.join(sys.path[0], "pbuf"))
 sys.path.append(os.path.join(sys.path[0], "pythonpickle"))
 sys.path.append(os.path.join(sys.path[0], "smp"))
+sys.path.append(os.path.join(sys.path[0], "rlpserialize"))
 
 # Import our results
 import cpnp
@@ -23,6 +24,7 @@ import mpack
 import pbuf
 import pythonpickle
 import smp
+import rlpserialize
 
 # Verbosity
 verbose = False
@@ -34,7 +36,8 @@ SERIALIZERS = {
     'MsgPack': mpack,
     'Protobuf': pbuf,
     'Pickle': pythonpickle,
-    'SimpleSerializer': smp
+    'SimpleSerializer': smp,
+    'RLP Serialize': rlpserialize,
 }
 
 # List of modules corresponding to serializer names
@@ -44,7 +47,8 @@ SERIALIZER_MODULES = {
     'MsgPack': 'mpack',
     'Protobuf': 'pbuf',
     'Pickle': 'pythonpickel',
-    'SimpleSerializer': 'smp'
+    'SimpleSerializer': 'smp',
+    'RLP Serialize': 'rlpserialize',
 }
 
 

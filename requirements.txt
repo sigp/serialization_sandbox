@@ -6,3 +6,5 @@ argparse
 texttable
 memory_profiler
 msgpack
+rlp
+eth-utils
