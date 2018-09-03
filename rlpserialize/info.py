@@ -28,7 +28,6 @@ verbose = False
 
 
 def explain_default_size():
-    print(dir(rlpobjects))
     """
     Show the size of the serialized object with defaults
     Note: ValidatorRecord omitted (has no defaults)
@@ -67,8 +66,6 @@ def explain_maxval_size():
     """
     Show the size of the object when using maximum values
     """
-
-    print(dir(rlpobjects))
 
     # Attestation Record
     # TODO replace oblique hash loop with correct size
